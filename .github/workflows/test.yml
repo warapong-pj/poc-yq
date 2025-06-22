@@ -58,4 +58,7 @@ jobs:
 
           # --- 4. Verify Change ---
           echo "--- Verifying content of $TARGET_FILE ---"
-          cat "$TARGET_FILE"
+          curl -s -L -O "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          mv kubectl /usr/local/bin/kubectl
+          kubectl kustomize build "$TARGET_FILE"
