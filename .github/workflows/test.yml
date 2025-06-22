@@ -52,7 +52,8 @@ jobs:
 
           # --- 3. Update Manifest ---
           IMAGE_FULL_NAME="$IMAGE_NAME:$IMAGE_TAG"
-          TARGET_FILE="${{ github.event.inputs.service }}/overlays/${{ github.event.inputs.environment }}/kustomization.yaml"
+          TARGET_DIR="${{ github.event.inputs.service }}/overlays/${{ github.event.inputs.environment }}/"
+          TARGET_FILE="$TARGET_DIR/kustomization.yaml"
 
           yq -i ".images[0].newTag = \"$IMAGE_TAG\"" "$TARGET_FILE"
 
@@ -61,4 +62,4 @@ jobs:
           curl -s -L -O "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           chmod +x kubectl
           mv kubectl /usr/local/bin/kubectl
-          kubectl kustomize build "$TARGET_FILE"
+          kubectl kustomize "$TARGET_DIR"
