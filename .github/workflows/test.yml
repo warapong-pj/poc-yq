@@ -10,11 +10,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
     inputs:
-      image_name:
+      service:
         description: 'The name of the container image to use'
         required: true
         default: 'nginx'
-      image_tag:
+      tag:
         description: 'The tag of the container image'
         required: true
         default: 'latest'
@@ -38,6 +38,6 @@ jobs:
 
           curl -s -L https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64.tar.gz | tar xzf -
           mv yq_linux_amd64 /usr/local/bin/yq
-          IMAGE_FULL_NAME="${{ github.event.inputs.image_name }}:${{ github.event.inputs.image_tag }}"
-          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE_FULL_NAME\"" hpa/deploy.yaml
+          IMAGE="${{ github.event.inputs.service }}:${{ github.event.inputs.tag }}"
+          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE\"" ${{ github.event.inputs.service }}/deploy.yaml
           cat hpa/deploy.yaml
