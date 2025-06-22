@@ -20,3 +20,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Update tag container image
+        run: |
+          #!/bin/sh
+
+          set -e
+
+          curl -L https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64.tar.gz | tar xzf -
+          mv yq_linux_amd64 /usr/local/bin/yq
+          yq -h
