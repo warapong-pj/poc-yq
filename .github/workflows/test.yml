@@ -1,4 +1,4 @@
-name: sample workflow
+name: Update Kubernetes Manifest
 
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
@@ -36,8 +36,25 @@ jobs:
 
           set -e
 
+          # --- 1. Validate Inputs ---
+          IMAGE_NAME="${{ github.event.inputs.service }}"
+          IMAGE_TAG="${{ github.event.inputs.tag }}"
+
+          if [ -z "$IMAGE_NAME" ] || [ -z "$IMAGE_TAG" ]; then
+            echo "::error::'image_name' and 'image_tag' inputs cannot be empty."
+            exit 1
+          fi
+
+          # --- 2. Install yq ---
           curl -s -L https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64.tar.gz | tar xzf -
           mv yq_linux_amd64 /usr/local/bin/yq
-          IMAGE="${{ github.event.inputs.service }}:${{ github.event.inputs.tag }}"
-          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE\"" ${{ github.event.inputs.service }}/deploy.yaml
-          cat hpa/deploy.yaml
+
+          # --- 3. Update Manifest ---
+          IMAGE_FULL_NAME="$IMAGE_NAME:$IMAGE_TAG"
+          TARGET_FILE="${{ github.event.inputs.service }}/deploy.yaml"
+
+          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE\"" "$TARGET_FILE"
+
+          # --- 4. Verify Change ---
+          echo "--- Verifying content of $TARGET_FILE ---"
+          cat "$TARGET_FILE"
