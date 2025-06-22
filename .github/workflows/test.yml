@@ -14,6 +14,9 @@ on:
         description: 'The name of the container image to use'
         required: true
         default: 'hpa-example'
+      environment:
+        required: true
+        default: 'dev'
       image:
         description: 'The name of the container image to use'
         required: true
@@ -55,9 +58,9 @@ jobs:
 
           # --- 3. Update Manifest ---
           IMAGE_FULL_NAME="$IMAGE_NAME:$IMAGE_TAG"
-          TARGET_FILE="${{ github.event.inputs.service }}/deploy.yaml"
+          TARGET_FILE="${{ github.event.inputs.service }}/overlays/${{ github.event.inputs.environment }}/kustomization.yaml"
 
-          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE_FULL_NAME\"" "$TARGET_FILE"
+          yq -i ".images[0].newTag = \"$IMAGE_TAG\"" "$TARGET_FILE"
 
           # --- 4. Verify Change ---
           echo "--- Verifying content of $TARGET_FILE ---"
