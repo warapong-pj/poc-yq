@@ -13,7 +13,11 @@ on:
       service:
         description: 'The name of the container image to use'
         required: true
-        default: 'nginx'
+        default: 'hpa-example'
+      image:
+        description: 'The name of the container image to use'
+        required: true
+        default: 'registry.k8s.io/hpa-example'
       tag:
         description: 'The tag of the container image'
         required: true
@@ -37,7 +41,7 @@ jobs:
           set -e
 
           # --- 1. Validate Inputs ---
-          IMAGE_NAME="${{ github.event.inputs.service }}"
+          IMAGE_NAME="${{ github.event.inputs.image }}"
           IMAGE_TAG="${{ github.event.inputs.tag }}"
 
           if [ -z "$IMAGE_NAME" ] || [ -z "$IMAGE_TAG" ]; then
