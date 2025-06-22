@@ -57,7 +57,7 @@ jobs:
           IMAGE_FULL_NAME="$IMAGE_NAME:$IMAGE_TAG"
           TARGET_FILE="${{ github.event.inputs.service }}/deploy.yaml"
 
-          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE\"" "$TARGET_FILE"
+          yq -i ".spec.template.spec.containers[0].image = \"$IMAGE_FULL_NAME\"" "$TARGET_FILE"
 
           # --- 4. Verify Change ---
           echo "--- Verifying content of $TARGET_FILE ---"
