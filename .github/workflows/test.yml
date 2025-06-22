@@ -29,4 +29,5 @@ jobs:
 
           curl -L https://github.com/mikefarah/yq/releases/download/v4.45.4/yq_linux_amd64.tar.gz | tar xzf -
           mv yq_linux_amd64 /usr/local/bin/yq
-          yq -h
+          yq -i '.spec.template.spec.containers[0].image = "nginx"' hpa/deploy.yaml
+          cat hpa/deploy.yaml
